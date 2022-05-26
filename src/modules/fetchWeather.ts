@@ -7,14 +7,15 @@ export const fetchWeather = (name: string): Promise<IWeather> => {
     }
 
     return axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${name}&appid=9877f88cec9db79e9e74254de7a470b6`
+        `https://api.openweathermap.org/data/2.5/weather?q=${name}&units=metric&appid=9877f88cec9db79e9e74254de7a470b6`
     ).then(response => {
         if (response.status !== 200) {
             throw new Error(`Response status was ${response.status}`);
         }
 
         return {
-            description: response.data.weather[0].main
+            description: response.data.weather[0].main,
+            temp: Math.round(response.data.main.temp / 0.5) * 0.5
         };
     });
 

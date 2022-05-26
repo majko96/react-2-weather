@@ -7,8 +7,10 @@ interface IReturn {
     setText: (text: string) => void;
     items: IItem[];
     addItem: () => void;
+    removeAllItems: () => void;
+    removeItem: (itemData: IItem) => void;
     isFetching: boolean;
-    refetchItem: (index: number) => void;
+    reFetchItem: (index: number, reFetch?: boolean) => void;
 }
 
 export const useWeather = (): IReturn => {
@@ -27,9 +29,28 @@ export const useWeather = (): IReturn => {
         setText('');
     };
 
-    const refetchItem = (index: number) => {
+    const removeAllItems = () => {
+        setItems([]);
+    };
+
+    const removeItem = (itemData: IItem) => {
+        console.log(itemData)
         const newItems = [...items];
-        newItems[index].hasError = false;
+        const removed = newItems.filter(function (item) {
+            return item !== itemData
+        })
+        setItems(removed);
+    }
+
+    const reFetchItem = (index: number, reFetch?: boolean) => {
+        const newItems = [...items];
+        if (reFetch) {
+            newItems[index].isFetching = false;
+            newItems[index].hasError = false;
+            newItems[index].weather = undefined;
+        } else {
+            newItems[index].hasError = false;
+        }
         setItems(newItems);
     };
 
@@ -72,8 +93,10 @@ export const useWeather = (): IReturn => {
         items,
         addItem,
         isFetching: items.filter(item => item.isFetching).length > 0,
-        refetchItem,
+        reFetchItem,
         text,
-        setText
+        setText,
+        removeAllItems,
+        removeItem,
     };
 };
